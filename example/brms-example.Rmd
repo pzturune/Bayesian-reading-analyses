@@ -1,0 +1,72 @@
+# Preliminaries
+
+This is an example for an R Markdown document showing a basic
+Bayesian regression.
+
+First, we load the packages. If these are not installed, you can run
+`install.packages(c("brms", "tidyverse"))` to install them.
+
+```{r }
+library(brms) # bayesian regression modelling with Stan
+library(tidyverse) # package for manipulating data easily
+```
+
+# Data
+
+In this example, we try to make a model that predicts ozone level from
+different variables in the `airquality` dataset.
+
+```{r }
+data(airquality)
+
+head(airquality)
+
+```
+
+# Model 1
+
+Specify the formula
+```{r }
+formula <- brms::bf(Ozone ~ Solar.R + Wind + Day)
+```
+
+Fit the model
+```{r }
+fit1 <- brms::brm(formula, data = airquality)
+```
+
+View the model summary
+```{r }
+summary(fit1)
+```
+
+# Model 2
+
+We can also specify the formula directly in the `brm()` function.
+
+```{r}
+fit2 <- brm(Ozone ~ Solar.R + Wind + Day + Temp + Month, data = airquality)
+
+```
+
+# Model comparison
+
+We can compare the models by evaluating their performance using
+leave-one-out cross-validation. This approximates how well new, unseen
+data would be predicted by the model.
+
+```{r}
+
+fit1_loo <- loo(fit1)
+print(fit1_loo)
+
+fit2_loo <- loo(fit2)
+print(fit2_loo)
+
+loo_compare(list(fit1_loo, fit2_loo))
+
+```
+
+Here it seems that the second model is slightly better at predicting
+unseen data (higher `elpd` value = expected log probability on new
+data).
