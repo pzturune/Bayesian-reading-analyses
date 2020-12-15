@@ -28,6 +28,8 @@ head(airquality)
 Specify the formula
 ```{r }
 formula <- brms::bf(Ozone ~ Solar.R + Wind + Day)
+get_prior(Ozone ~ Solar.R + Wind + Day, data=airquality) #This is how I tried to find out more about the priors;
+# didn't knit but executed separately
 ```
 
 Fit the model
