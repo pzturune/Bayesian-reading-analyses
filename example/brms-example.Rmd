@@ -25,19 +25,37 @@ head(airquality)
 
 # Model 1
 
-Specify the formula
+## Choosing priors
+
+Let's first consider the predictor `Wind` which is the windspeed in
+mph and it's prediction of `Ozone` (parts per billion). We want to
+come up with a reasonable value for how much a change in wind of 1mph
+affects the ozone level. Without prior info, we can consider that it
+is bidirectional, so we can center it at zero. If we want a weakly
+informative prior something like normal(0, 50) might be good, as it
+covers a large range of reasonable values.
+
+```{r}
+priors <- set_prior(
+  "normal(0, 50)",
+  class = "b",
+  coef = "Wind"
+)
+```
+
+## Specify the formula
 ```{r }
 formula <- brms::bf(Ozone ~ Solar.R + Wind + Day)
-get_prior(Ozone ~ Solar.R + Wind + Day, data=airquality) #This is how I tried to find out more about the priors;
+#get_prior(Ozone ~ Solar + Wind + Day, data=airquality) #This is how I tried to find out more about the priors;
 # didn't knit but executed separately
 ```
 
-Fit the model
+## Fit the model
 ```{r }
-fit1 <- brms::brm(formula, data = airquality)
+fit1 <- brms::brm(formula, prior = priors, data = airquality)
 ```
 
-View the model summary
+## View the model summary
 ```{r }
 summary(fit1)
 ```
